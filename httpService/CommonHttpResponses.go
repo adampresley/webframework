@@ -5,6 +5,15 @@ import (
 )
 
 /*
+AccessDenied is a convenience method. This will set the HTTP status
+code to 403 and send back a BasicJSONResponse with a message
+of Access Denied
+*/
+func AccessDenied(writer http.ResponseWriter) {
+	NewBasicJSONResponse(false, "Access Denied").Forbidden(writer)
+}
+
+/*
 BadRequest is a convenience method. This will set the HTTP status
 code to 400. This is useful for telling a caller that the
 request is malformed.

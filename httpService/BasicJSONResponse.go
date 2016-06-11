@@ -21,6 +21,13 @@ func NewBasicJSONResponse(success bool, message string) BasicJSONResponse {
 	}
 }
 
+func ErrorJSONResponse(message string) BasicJSONResponse {
+	return BasicJSONResponse{
+		IsSuccess: false,
+		Message:   message,
+	}
+}
+
 /*
 BadRequest sends this basic JSON response as a 400
 */

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/fvbock/endless"
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
 )
@@ -79,11 +80,7 @@ func (listener *HTTPListener) AddStaticRoute(pathPrefix string, directory string
 Start starts the HTTP listener and servicing requests.
 */
 func (listener *HTTPListener) Start() error {
-	httpServer := &http.Server{
-		Addr:    fmt.Sprintf("%s:%d", listener.Address, listener.Port),
-		Handler: alice.New().Then(listener.Router),
-	}
-
+	httpServer := endless.NewServer(fmt.Sprintf("%s:%d", listener.Address, listener.Port), alice.New().Then(listener.Router))
 	return httpServer.ListenAndServe()
 }
 
@@ -91,10 +88,6 @@ func (listener *HTTPListener) Start() error {
 StartTLS starts the HTTP listener with SSL and services requests
 */
 func (listener *HTTPListener) StartTLS(certificateFile, keyFile string) error {
-	httpServer := &http.Server{
-		Addr:    fmt.Sprintf("%s:%d", listener.Address, listener.Port),
-		Handler: alice.New().Then(listener.Router),
-	}
-
+	httpServer := endless.NewServer(fmt.Sprintf("%s:%d", listener.Address, listener.Port), alice.New().Then(listener.Router))
 	return httpServer.ListenAndServeTLS(certificateFile, keyFile)
 }

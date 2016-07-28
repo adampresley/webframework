@@ -41,6 +41,41 @@ func Forbidden(writer http.ResponseWriter, response interface{}) {
 }
 
 /*
+JSONBadRequest is a shortcut to send a bad request with a basic JSON object
+*/
+func JSONBadRequest(writer http.ResponseWriter, message string) {
+	NewBasicJSONResponse(false, message).BadRequest(writer)
+}
+
+/*
+JSONError is a shortcut to send an error with a basic JSON object
+*/
+func JSONError(writer http.ResponseWriter, message string) {
+	NewBasicJSONResponse(false, message).Error(writer)
+}
+
+/*
+JSONForbidden is a shortcut to send a forbidden response with a basic JSON object
+*/
+func JSONForbidden(writer http.ResponseWriter, message string) {
+	NewBasicJSONResponse(false, message).Forbidden(writer)
+}
+
+/*
+JSONNotFound is a shortcut to send a not found message with a basic JSON object
+*/
+func JSONNotFound(writer http.ResponseWriter, message string) {
+	NewBasicJSONResponse(false, message).NotFound(writer)
+}
+
+/*
+JSONSuccess is a shortcut to send a 200 with a basic JSON object
+*/
+func JSONSuccess(writer http.ResponseWriter, message string) {
+	NewBasicJSONResponse(true, message).Success(writer)
+}
+
+/*
 NotFound is a convenience method. This will set the HTTP status
 code to 404. This is useful in telling a caller that
 the resources they are trying to get is not found.

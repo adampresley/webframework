@@ -50,6 +50,14 @@ func (listener *HTTPListener) AddRoute(path string, handlerFunc http.HandlerFunc
 }
 
 /*
+AddRouteFunction adds an HTTP handler route that is matched by a function call
+*/
+func (listener *HTTPListener) AddRouteFunction(matcherFunc mux.MatcherFunc, handlerFunc http.HandlerFunc, methods ...string) *HTTPListener {
+	listener.Router.MatcherFunc(matcherFunc).Handler(listener.BaseMiddlewareHandlers.ThenFunc(handlerFunc)).Methods(methods...)
+	return listener
+}
+
+/*
 AddRouteWithMiddleware adds a HTTP handler route that goes through an additional
 middleware handler, to the HTTP listener. This is particularly useful
 for setting up routes that require authentication.

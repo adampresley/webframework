@@ -14,7 +14,8 @@ import (
 GoLayout is a layout using Go templates
 */
 type GoLayout struct {
-	layout *template.Template
+	layout         *template.Template
+	layoutContents string
 }
 
 func (l *GoLayout) addHelperFunctions() {
@@ -41,8 +42,8 @@ func (l *GoLayout) LoadLayoutFile(fileName string) error {
 		return err
 	}
 
-	l.layout = template.Must(template.New("layout").Parse(string(layoutContents[:len(layoutContents)])))
-	l.addHelperFunctions()
+	l.layoutContents = string(layoutContents[:len(layoutContents)])
+	l.renderLayout()
 	return nil
 }
 
@@ -50,9 +51,14 @@ func (l *GoLayout) LoadLayoutFile(fileName string) error {
 LoadLayoutString loads a layout from a passed-in byte array
 */
 func (l *GoLayout) LoadLayoutString(contents []byte) error {
-	l.layout = template.Must(template.New("layout").Parse(string(contents[:len(contents)])))
-	l.addHelperFunctions()
+	l.layoutContents = string(contents[:len(contents)])
+	l.renderLayout()
 	return nil
+}
+
+func (l *GoLayout) renderLayout() {
+	l.layout = template.Must(template.New("layout").Parse(l.layoutContents))
+	l.addHelperFunctions()
 }
 
 /*
@@ -63,6 +69,8 @@ func (l *GoLayout) RenderViewFile(fileName string, context interface{}) (string,
 	var err error
 	var viewTemplate *template.Template
 	stringWriter := bytes.NewBufferString("")
+
+	l.renderLayout()
 
 	if viewContents, err = ioutil.ReadFile(fileName); err != nil {
 		return "", errors.Wrapf(err, "Unable to read the view file %s", fileName)
@@ -87,6 +95,8 @@ func (l *GoLayout) RenderViewFilef(writer http.ResponseWriter, fileName string, 
 	var renderedContents string
 	var err error
 
+	l.renderLayout()
+
 	if renderedContents, err = l.RenderViewFile(fileName, context); err != nil {
 		return errors.Wrapf(err, "Unable to render the view file %s", fileName)
 	}
@@ -102,6 +112,8 @@ func (l *GoLayout) RenderViewString(contents []byte, context interface{}) (strin
 	var err error
 	var viewTemplate *template.Template
 	stringWriter := bytes.NewBufferString("")
+
+	l.renderLayout()
 
 	if viewTemplate, err = l.layout.Parse(string(contents[:len(contents)])); err != nil {
 		return "", errors.Wrapf(err, "Unable to parse the view in RenderViewString()")
@@ -121,6 +133,8 @@ writes it out to the provided writer. Useful for HTTP responses
 func (l *GoLayout) RenderViewStringf(writer http.ResponseWriter, contents []byte, context interface{}) error {
 	var renderedContents string
 	var err error
+
+	l.renderLayout()
 
 	if renderedContents, err = l.RenderViewString(contents, context); err != nil {
 		return errors.Wrap(err, "Unable to render the view")

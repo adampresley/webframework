@@ -100,12 +100,15 @@ RenderViewString renders a view from byte array content into this layout
 */
 func (l *GoLayout) RenderViewString(contents []byte, context interface{}) (string, error) {
 	var err error
-
-	viewTemplate := template.Must(template.New("view").Parse(string(contents[:len(contents)])))
+	var viewTemplate *template.Template
 	stringWriter := bytes.NewBufferString("")
 
-	if err = viewTemplate.ExecuteTemplate(stringWriter, "layout", context); err != nil {
-		return "", errors.Wrapf(err, "Unable to render the view")
+	if viewTemplate, err = l.layout.Parse(string(contents[:len(contents)])); err != nil {
+		return "", errors.Wrapf(err, "Unable to parse the view in RenderViewString()")
+	}
+
+	if err = viewTemplate.Execute(stringWriter, context); err != nil {
+		return "", errors.Wrapf(err, "Unable to render view in RenderViewString()")
 	}
 
 	return stringWriter.String(), nil

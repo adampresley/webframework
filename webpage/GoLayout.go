@@ -22,6 +22,9 @@ func (l *GoLayout) addHelperFunctions() {
 		"eq": func(a, b interface{}) bool {
 			return a == b
 		},
+		"neq": func(a, b interface{}) bool {
+			return a != b
+		},
 	}
 
 	l.layout.Funcs(funcMap)

@@ -16,7 +16,7 @@ NewXSSService creates a new cross-site scripting service.
 func NewXSSService() *XSSService {
 	policy := bluemonday.UGCPolicy()
 	policy.AllowAttrs("align", "class").OnElements("table", "div", "p", "section", "article", "header")
-	policy.AllowElements("iframe")
+	policy.AllowAttrs("width", "height", "src", "frameborder", "allowfullscreen").OnElements("iframe")
 
 	return &XSSService{
 		sanitizer: policy,
